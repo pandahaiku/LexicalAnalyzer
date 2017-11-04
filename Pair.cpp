@@ -4,7 +4,7 @@
 *
 * Usage:   To create lexeme and token-type pairs that can be easily printed,
 *          modified, and inserted into a list.
-* 
+*
 ******************************************************************************/
 
 #include "Pair.h"

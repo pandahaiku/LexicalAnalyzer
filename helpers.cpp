@@ -1,10 +1,10 @@
 /******************************************************************************
 * File:		Helpers.cpp
-* Authors:	David Poss, Douglas Galm 
-* 
+* Authors:	David Poss, Douglas Galm
+*
 * Usage:	Has a good amount of helper functions that make life just a little
 *			bit easier
-* 
+*
 ******************************************************************************/
 
 #include "globals.h"
@@ -42,4 +42,10 @@ std::string sepToString(std::string separator) {
 
 std::string tokenTypeToString(TokenType t) {
 	return Tokens[t - 1];
+}
+
+std::string converToOutputName(std::string str) {
+	int lastindex = str.find_last_of(".");
+	std::string output = str.substr(0, lastindex) + "-results.txt";
+	return output;
 }

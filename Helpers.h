@@ -29,4 +29,7 @@ std::string sepToString(std::string separator);
 /* Converts a TokenType enum value to a printable string */
 std::string tokenTypeToString(TokenType t);
 
+/* Convert given file name to an output file name */
+std::string converToOutputName(std::string str);
+
 #endif

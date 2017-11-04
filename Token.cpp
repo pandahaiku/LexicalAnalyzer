@@ -2,7 +2,7 @@
 * File:		Tokens.cpp
 * Authors:	David Poss, Douglas Galm
 *
-* Usage:	Implements the functionalities of the Token class. See the Tokens.h 
+* Usage:	Implements the functionalities of the Token class. See the Tokens.h
 *			file for more information about specific methods.
 *
 ******************************************************************************/
@@ -65,8 +65,8 @@ void Token::updateState(std::string input) {
 		}
 	}
 	/* Identifier */
-	if (type_ == Identifier && isAlphaOrPound(input)) {
-		if (state_ >= 0) {
+	if (type_ == Identifier) {
+		if (state_ >= 0 && isAlphaOrPound(input)) {
 			if (input == "#") {
 				state_ = idTable[state_][1];
 			}
@@ -98,18 +98,18 @@ std::ostream& operator<<(std::ostream& os, const Token& t) {
 	return os;
 }
 
-bool Token::isAccepted() { 
-	return accept_; 
+bool Token::isAccepted() {
+	return accept_;
 }
 
-TokenType Token::getType() { 
-	return type_; 
+TokenType Token::getType() {
+	return type_;
 }
 
-std::string Token::getToken() { 
-	return token_; 
+std::string Token::getToken() {
+	return token_;
 }
 
-int Token::getState() { 
-	return state_; 
+int Token::getState() {
+	return state_;
 }

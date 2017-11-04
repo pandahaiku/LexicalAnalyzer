@@ -2,9 +2,9 @@
 * File:		Helpers.cpp
 * Authors:	David Poss, Douglas Galm
 *
-* Usage:	Defines several global variables, including lists of keywords, 
-*			separators, operators, miscellaneous characters, and token types. 
-*			Also includes the transition tables for each FSM as well as their 
+* Usage:	Defines several global variables, including lists of keywords,
+*			separators, operators, miscellaneous characters, and token types.
+*			Also includes the transition tables for each FSM as well as their
 *			accepted states.
 *
 ******************************************************************************/
@@ -14,13 +14,13 @@
 #include <string>
 
 enum TokenType {
-	Integer		= 1,
-	Real		= 2,
-	Identifier	= 3,
-	Operator	= 4,
-	Keyword		= 5,
-	Separator	= 6,
-	Unknown		= 7
+	Integer = 1,
+	Real = 2,
+	Identifier = 3,
+	Operator = 4,
+	Keyword = 5,
+	Separator = 6,
+	Unknown = 7
 };
 
 #define NUM_KEYWORDS 13
@@ -35,10 +35,10 @@ const std::string separators[NUM_SEPARATORS] = {
 	"(",		")",		",",		";",		"@",
 	":",		"%%",		"\t" };
 
-#define NUM_OPERATORS 11
+#define NUM_OPERATORS 12
 const std::string operators[NUM_OPERATORS] = {
-	"=",		"+",		"-",		"=",		">=",		"/="		
-	"/",		">",		"<",		"*",		"<=" };
+	"=",		"+",		"-",		"=",		">=",		"/=",
+	"/",		">",		"<",		"*",		"<=",		":=" };
 
 #define NUM_MISCELLANEOUS 12
 const std::string miscellaneous[NUM_MISCELLANEOUS] = {

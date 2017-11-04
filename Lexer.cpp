@@ -3,7 +3,7 @@
 * Authors: David Poss, Douglas Galm
 *
 * Usage:   Creates a Lexer that can parse a specified file, dividing it up into
-*          tokens with the getTokens(...) function, as well as add them into 
+*          tokens with the getTokens(...) function, as well as add them into
 *          one of two lists, depending on if they are accepted or rejected by
 *          their appropriate FSM.
 *
@@ -25,14 +25,14 @@ TokenType Lexer::strToTokenType(std::string str) {
 	else if (str == ".") {
 		return Real;
 	}
-	else  {
+	else {
 		return Unknown;
 	}
 }
 /* Function to add a lexeme to the list */
 void Lexer::addLexeme(Token& lexeme) {
 	if (!lexeme.isAccepted()) {
-		unknowns_.push_back(Pair(lexeme.getToken(), 
+		unknowns_.push_back(Pair(lexeme.getToken(),
 			tokenTypeToString(lexeme.getType())));
 		lexeme.clear();
 		return;
@@ -67,37 +67,61 @@ void Lexer::addLexeme(Token& lexeme) {
 }
 
 /* Main lexer function */
-void Lexer::getTokens(std::string inputFile) {
+bool Lexer::getTokens(std::string inputFile) {
 	/* Read character from file one at a time, until eof */
 	char c;
 	Token currentLexeme;
 	std::fstream inputCode(inputFile);
-	while (!inputCode.eof()) {
-		inputCode.get(c);
+	if (!inputCode.is_open()) {
+		std::cout << "Error opening file. Please enter another." << std::endl;
+		std::cin.get();
+		return false;
+	}
+	while (inputCode.get(c)) {
 		std::string input = std::string(1, c);
 		/* See if input terminates a token */
+
 		if (isOfType(separators, input, NUM_SEPARATORS)
 			|| isOfType(operators, input, NUM_OPERATORS)
 			|| isOfType(miscellaneous, input, NUM_MISCELLANEOUS)
 			|| isSpace(input))
 		{
+
 			if (isOfType(keywords, currentLexeme.getToken(), NUM_KEYWORDS)) {
 				currentLexeme.updateType(Keyword);
 				addLexeme(currentLexeme);
+				inputCode.unget();
 			}
 			else if (isSpace(input) && currentLexeme.getToken() != "") {
 				addLexeme(currentLexeme);
+				inputCode.unget();
 			}
 			else if (currentLexeme.isIdentifier()) {
 				addLexeme(currentLexeme);
+				inputCode.unget();
 			}
 			else if (currentLexeme.isInteger()) {
 				addLexeme(currentLexeme);
+				inputCode.unget();
 			}
 			else if (currentLexeme.isReal()) {
 				addLexeme(currentLexeme);
+				inputCode.unget();
 			}
 			else if (isOfType(separators, input, NUM_SEPARATORS)) {
+				if (input == ":") {
+					char temp;
+					inputCode.get(temp);
+					std::string nextInput = std::string(1, temp);
+					if (input + nextInput == ":=") {
+						Token t(0, true, input + nextInput, Operator);
+						addLexeme(t);
+						continue;
+					}
+					else {
+						inputCode.unget();
+					}
+				}
 				Token t(0, true, input, Separator);
 				addLexeme(t);
 			}
@@ -124,6 +148,7 @@ void Lexer::getTokens(std::string inputFile) {
 					if (input + nextInput == "%%") {
 						Token t(0, true, input + nextInput, Separator);
 						addLexeme(t);
+						continue;
 					}
 					else {
 						inputCode.unget();
@@ -148,7 +173,7 @@ void Lexer::getTokens(std::string inputFile) {
 				currentLexeme.updateState(input);
 				continue;
 			}
-			if (currentLexeme.isInteger() && isDigit(input)) {
+			else if (currentLexeme.isInteger() && isDigit(input)) {
 				currentLexeme.updateToken(input);
 				currentLexeme.updateState(input);
 			}
@@ -164,11 +189,11 @@ void Lexer::getTokens(std::string inputFile) {
 				currentLexeme.updateToken(input);
 				currentLexeme.updateType(Real);
 				currentLexeme.updateStateManually(0);
-				/* Switched from Integer to real, so run current token 
-				   through the real machine FSM to get the correct state*/
+				/* Switched from Integer to real, so run current token
+				through the real machine FSM to get the correct state*/
 				currentLexeme.runLexemeThroughReals();
 			}
-			else if (isAlphaOrPound(input)) {
+			else if (currentLexeme.isIdentifier()) {
 				currentLexeme.updateToken(input);
 				currentLexeme.updateType(Identifier);
 				currentLexeme.updateState(input);
@@ -176,12 +201,18 @@ void Lexer::getTokens(std::string inputFile) {
 		}
 	} /* end for loop */
 	inputCode.close();
+	return true;
 } /* end function */
 
 void Lexer::printLexemes(std::string filename) {
 	std::cout << "Printing lexemes to " << filename << std::endl;
 	std::ofstream output;
 	output.open(filename);
+	if (!output.is_open()) {
+		std::cout << "Error opening file... Quitting.";
+		std::cout << std::endl;
+		return;
+	}
 	output << "Accepted Tokens:" << std::endl;
 	std::list<Pair>::iterator it;
 	for (it = lexemes_.begin(); it != lexemes_.end(); it++) {

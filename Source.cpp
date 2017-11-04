@@ -10,16 +10,25 @@
 ******************************************************************************/
 
 #include "Token.h"
+#include "Helpers.h"
 #include "Lexer.h"
+#include "Syntax.h"
+#include <iostream>
 
 int main() {
+	std::string input;
+	std::string output;
 
-	std::string input = "sample.txt";
-	std::string output = "finished.txt";
+	while (true) {
+		std::cout << "Enter a file to convert or hit Ctrl+c to quit\nFile: ";
+		std::cin >> input;
 
-	Lexer lexer;
-	lexer.getTokens(input);
-	lexer.printLexemes(output);
-
+		Lexer lexer;
+		if (lexer.getTokens(input)) {
+			functionA(lexer.lexemes_, true);
+			lexer.printLexemes(converToOutputName(input));
+		}
+		std::cin.clear();
+	}
 	return 0;
 }
